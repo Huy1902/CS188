@@ -132,6 +132,8 @@ class SearchAgent(Agent):
         if 'actionIndex' not in dir(self): self.actionIndex = 0
         i = self.actionIndex
         self.actionIndex += 1
+        # import time
+        # time.sleep(10)
         if i < len(self.actions):
             return self.actions[i]
         else:
