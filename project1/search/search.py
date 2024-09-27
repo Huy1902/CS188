@@ -60,6 +60,9 @@ class SearchProblem:
         The sequence must be composed of legal moves.
         """
         util.raiseNotDefined()
+        
+    def getGoalState(self):
+        util.raiseNotDefined()
 
 
 def tinyMazeSearch(problem):
@@ -88,28 +91,28 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    stack = util.Stack()
-    start = problem.getStartState()
-    stack.push(start)
-    expandedState = set()
-    path = {start : None}
+    frontier = util.Stack()
+    startState = problem.getStartState()
+    frontier.push(startState)
+    reached = set()
+    path = {startState : None}
     direction = {}
     
     #save goal location
     cur = None
 
-    while(stack.isEmpty() == False) :
-        top = stack.pop()
-        if(top not in expandedState) :
+    while(frontier.isEmpty() == False) :
+        top = frontier.pop()
+        if(top not in reached) :
             if problem.isGoalState(top):
                 cur = top
                 break
             else:
-                expandedState.add(top)
+                reached.add(top)
                 for successor in problem.getSuccessors(top) :
                     #print(successor)
-                    if successor[0] not in expandedState:
-                        stack.push(successor[0])    
+                    if successor[0] not in reached:
+                        frontier.push(successor[0])    
                         
                         path[successor[0]] = top
                         direction[successor[0]] = successor[1]
@@ -126,27 +129,27 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    queue = util.Queue()
-    start = problem.getStartState()
-    queue.push(start)
-    expandedState = set()
-    expandedState.add(start)
-    path = {start : None}
+    frontier = util.Queue()
+    startState = problem.getStartState()
+    frontier.push(startState)
+    reached = set()
+    reached.add(startState)
+    path = {startState : None}
     direction = {}
     
     cur = None
     
-    while(queue.isEmpty() == False) :
-        first = queue.pop()
+    while(frontier.isEmpty() == False) :
+        first = frontier.pop()
         if(problem.isGoalState(first)):
             cur = first
             break
         else:
-            expandedState.add(first)
+            reached.add(first)
             for successor in problem.getSuccessors(first):
-                if(successor[0] not in expandedState):
-                    expandedState.add(successor[0])
-                    queue.push(successor[0])
+                if(successor[0] not in reached):
+                    reached.add(successor[0])
+                    frontier.push(successor[0])
                     path[successor[0]] = first
                     #print(successor[0], ' ', first)
                     direction[successor[0]] = successor[1]
@@ -163,41 +166,32 @@ def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     getPathCost = lambda node : problem.getCostOfActions(node[1])
-    priQueue = util.PriorityQueueWithFunction(getPathCost)
+    frontier = util.PriorityQueueWithFunction(getPathCost)
     
     start = problem.getStartState()
-    priQueue.push((start, []))
-    inQueue = set()
-    # path = {start : None}
-    # direction = []
+    frontier.push((start, []))
+    reached = set()
     
-    while not priQueue.isEmpty():
-        node = priQueue.pop()
-        frontier = node[0]
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        state = node[0]
         path = node[1]
-        # print('root path:', path)
-        if not frontier in inQueue:
-            inQueue.add(frontier)
-            if(problem.isGoalState(frontier)):
-                # path.reverse()
-                # print(path)
+        if not state in reached:
+            reached.add(state)
+            if(problem.isGoalState(state)):
                 return path
             else:
-                for successor in problem.getSuccessors(frontier):
-                    location = successor[0]
-                    if location not in inQueue:
+                for successor in problem.getSuccessors(state):
+                    nextState = successor[0]
+                    if nextState not in reached:
                         direction = successor[1]
                         newPath = path[:]
                         newPath.append(direction)
-                        newNode = ((location, newPath))
-                        priQueue.push((newNode))
-                        
-                        # print(fringe, location, direction, newPath, path)
-                        # direction[successor[0]] = successor[1]
-                        
+                        newNode = ((nextState, newPath))
+                        frontier.push((newNode))
     util.raiseNotDefined()
 
-def nullHeuristic(state, problem=None):
+def nullHeuristic(state, problem : None):
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
@@ -207,6 +201,29 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    getPathCost = lambda node: problem.getCostOfActions(node[1]) + heuristic(node[0], problem)
+    
+    startState = problem.getStartState()
+    frontier = util.PriorityQueueWithFunction(getPathCost)
+    frontier.push((startState, []))
+    
+    reached = set()
+    
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        state = node[0]
+        path = node[1]
+        if problem.isGoalState(state):
+            return path
+        else:
+            if not state in reached:
+                reached.add(state)
+                for successor in problem.getSuccessors(state):
+                    nextState = successor[0]
+                    if not nextState in reached:
+                        direction = successor[1]
+                        newPath = path + [direction]
+                        frontier.push((nextState, newPath))
     util.raiseNotDefined()
 
 
