@@ -91,29 +91,30 @@ def depthFirstSearch(problem: SearchProblem):
     stack = util.Stack()
     start = problem.getStartState()
     stack.push(start)
-    visited = []
+    expandedState = set()
     path = {start : None}
     direction = {}
     
     #save goal location
     cur = None
-    
+
     while(stack.isEmpty() == False) :
         top = stack.pop()
-        if(top not in visited) :
+        if(top not in expandedState) :
             if problem.isGoalState(top):
                 cur = top
                 break
             else:
-                visited.append(top)
+                expandedState.add(top)
                 for successor in problem.getSuccessors(top) :
                     #print(successor)
-                    if successor[0] not in visited:
+                    if successor[0] not in expandedState:
                         stack.push(successor[0])    
+                        
                         path[successor[0]] = top
                         direction[successor[0]] = successor[1]
-    
     #Path reconstruction
+    
     listAction = []
     while(path[cur] is not None) :
         listAction.append(direction[cur])
@@ -128,8 +129,8 @@ def breadthFirstSearch(problem: SearchProblem):
     queue = util.Queue()
     start = problem.getStartState()
     queue.push(start)
-    visited = []
-    visited.append(start)
+    expandedState = set()
+    expandedState.add(start)
     path = {start : None}
     direction = {}
     
@@ -141,10 +142,10 @@ def breadthFirstSearch(problem: SearchProblem):
             cur = first
             break
         else:
-            visited.append(first)
+            expandedState.add(first)
             for successor in problem.getSuccessors(first):
-                if(successor[0] not in visited):
-                    visited.append(successor[0])
+                if(successor[0] not in expandedState):
+                    expandedState.add(successor[0])
                     queue.push(successor[0])
                     path[successor[0]] = first
                     #print(successor[0], ' ', first)
@@ -166,7 +167,7 @@ def uniformCostSearch(problem: SearchProblem):
     
     start = problem.getStartState()
     priQueue.push((start, []))
-    inQueue = []
+    inQueue = set()
     # path = {start : None}
     # direction = []
     
@@ -176,7 +177,7 @@ def uniformCostSearch(problem: SearchProblem):
         path = node[1]
         # print('root path:', path)
         if not frontier in inQueue:
-            inQueue.append(frontier)
+            inQueue.add(frontier)
             if(problem.isGoalState(frontier)):
                 # path.reverse()
                 # print(path)
