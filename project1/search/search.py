@@ -60,9 +60,6 @@ class SearchProblem:
         The sequence must be composed of legal moves.
         """
         util.raiseNotDefined()
-        
-    def getGoalState(self):
-        util.raiseNotDefined()
 
 
 def tinyMazeSearch(problem):
@@ -130,36 +127,28 @@ def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     frontier = util.Queue()
+    
     startState = problem.getStartState()
-    frontier.push(startState)
+    frontier.push((startState, []))
     reached = set()
     reached.add(startState)
-    path = {startState : None}
-    direction = {}
     
-    cur = None
-    
-    while(frontier.isEmpty() == False) :
-        first = frontier.pop()
-        if(problem.isGoalState(first)):
-            cur = first
-            break
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        state = node[0]
+        path = node[1]
+        if(problem.isGoalState(state)):
+            return path
         else:
-            reached.add(first)
-            for successor in problem.getSuccessors(first):
-                if(successor[0] not in reached):
-                    reached.add(successor[0])
-                    frontier.push(successor[0])
-                    path[successor[0]] = first
-                    #print(successor[0], ' ', first)
-                    direction[successor[0]] = successor[1]
-    listAction = []
-    while(path[cur] is not None) :
-        listAction.append(direction[cur])
-        cur = path[cur]
-    listAction.reverse()
-    return listAction
-    
+            for successor in problem.getSuccessors(state):
+                nextState = successor[0]
+                if nextState not in reached:
+                    reached.add(nextState)
+                    direction = successor[1]
+                    newPath = path + [direction]
+                    newNode = ((nextState, newPath))
+                    frontier.push((newNode))
+    return []
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
@@ -168,8 +157,8 @@ def uniformCostSearch(problem: SearchProblem):
     getPathCost = lambda node : problem.getCostOfActions(node[1])
     frontier = util.PriorityQueueWithFunction(getPathCost)
     
-    start = problem.getStartState()
-    frontier.push((start, []))
+    startState = problem.getStartState()
+    frontier.push((startState, []))
     reached = set()
     
     while not frontier.isEmpty():

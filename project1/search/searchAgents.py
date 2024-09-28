@@ -132,8 +132,8 @@ class SearchAgent(Agent):
         if 'actionIndex' not in dir(self): self.actionIndex = 0
         i = self.actionIndex
         self.actionIndex += 1
-        # import time
-        # time.sleep(10)
+        #import time
+        #time.sleep(10)
         if i < len(self.actions):
             return self.actions[i]
         else:
@@ -298,6 +298,8 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        corners = self.corners
+        return (self.startingPosition, corners)
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -305,6 +307,8 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        #print(state, self.corners[self.indexConer])
+        return state[1] == ()
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -328,7 +332,17 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-
+            x,y = state[0]
+            corner = state[1]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+                if nextState in corner:
+                    listCorner = list(corner)
+                    listCorner.remove(nextState)
+                    corner = tuple(listCorner)
+                successors.append( ( (nextState, corner), action) )
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
