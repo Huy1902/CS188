@@ -35,6 +35,8 @@ Good luck and happy searching!
 """
 
 from typing import List, Tuple, Any
+from xmlrpc.client import MAXINT
+
 from game import Directions
 from game import Agent
 from game import Actions
@@ -342,7 +344,7 @@ class CornersProblem(search.SearchProblem):
                     listCorner = list(corner)
                     listCorner.remove(nextState)
                     corner = tuple(listCorner)
-                successors.append( ( (nextState, corner), action) )
+                successors.append( ( (nextState, corner), action , 1) )
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -373,11 +375,20 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+    "*** YOUR CODE HERE ***"
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    heuristic = 0
+    remainingCorners = list(state[1])
+    currentPosition = state[0]
+    while remainingCorners:
+        distance = [(util.manhattanDistance(currentPosition, corner), corner) for corner in remainingCorners]
+        nearestCorner = min(distance)[1]
+        currentPosition = nearestCorner
+        heuristic += min(distance)[0]
+        remainingCorners.remove(nearestCorner)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    return heuristic # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
