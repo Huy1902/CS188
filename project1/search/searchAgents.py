@@ -486,7 +486,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     if not remainingFood:
         return 0
     currentPosition = state[0]
-    distance = [util.manhattanDistance(currentPosition, foodPosition) for foodPosition in remainingFood]
+    distance = [mazeDistance(currentPosition, foodPosition, problem.startingGameState) for foodPosition in remainingFood]
     #print(distance)
     heuristic = max(distance)
     return heuristic
