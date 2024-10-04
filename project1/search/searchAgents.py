@@ -33,7 +33,8 @@ description for details.
 
 Good luck and happy searching!
 """
-
+from logging import currentframe
+from math import remainder
 from typing import List, Tuple, Any
 from xmlrpc.client import MAXINT
 
@@ -376,18 +377,23 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     admissible (as well as consistent).
     """
     "*** YOUR CODE HERE ***"
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    heuristic = 0
-    remainingCorners = list(state[1])
+    # corners = problem.corners # These are the corner coordinates
+    # walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    # heuristic = 0
+    # remainingCorners = list(state[1])
+    # currentPosition = state[0]
+    # while remainingCorners:
+    #     distance = [(util.manhattanDistance(currentPosition, corner), corner) for corner in remainingCorners]
+    #     nearestCorner = min(distance)[1]
+    #     currentPosition = nearestCorner
+    #     heuristic += min(distance)[0]
+    #     remainingCorners.remove(nearestCorner)
     currentPosition = state[0]
-    while remainingCorners:
-        distance = [(util.manhattanDistance(currentPosition, corner), corner) for corner in remainingCorners]
-        nearestCorner = min(distance)[1]
-        currentPosition = nearestCorner
-        heuristic += min(distance)[0]
-        remainingCorners.remove(nearestCorner)
-
+    remainingCorners = list(state[1])
+    if not remainingCorners:
+        return 0
+    distance = [util.manhattanDistance(currentPosition, corner) for corner in remainingCorners]
+    heuristic = max(distance)
     return heuristic # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
