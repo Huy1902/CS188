@@ -526,7 +526,10 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        path = search.ucs(problem)
+        if path is None:
+            raise Exception('No path to closest dot found')
+        return path
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -546,7 +549,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     def __init__(self, gameState):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
-        self.food = gameState.getFood()
+        self.food = gameState.getFood().asList()
 
         # Store info for the PositionSearchProblem (no need to change this)
         self.walls = gameState.getWalls()
@@ -559,10 +562,15 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x,y = state
-
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        x,y = state
+        #print(self.food)
+        if not self.food:
+            return True
+        if state in self.food:
+            self.food.remove(state)
+            return True
+        return False
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
     """

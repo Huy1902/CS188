@@ -213,8 +213,6 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
                         direction = successor[1]
                         newPath = path + [direction]
                         frontier.push((nextState, newPath))
-    util.raiseNotDefined()
-
 
 # Abbreviations
 bfs = breadthFirstSearch
