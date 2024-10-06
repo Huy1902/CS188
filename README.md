@@ -1,4 +1,4 @@
-These projects are in the course CS188. This is where I upload my work on that.
+These projects are in the course CS188. Here is where I upload my work on that.
 
 # Table of contents
 - [CSPs Overview](#csps-overview)
@@ -11,9 +11,9 @@ These projects are in the course CS188. This is where I upload my work on that.
 ## 1. Terminology
 - Constraint satisfaction problems are a type of identification problem in which
 the goal is important, not the path.
-- Goal test is a set of constraints.
+A goal test is a set of constraints.
 - State is a partial assignment.
-- Successor function is assigning an unassigned variable.
+- The successor function assigns an unassigned variable.
 - Backtracking: traditional solution
 ## 2. Improve the performance
 - Filtering: forward checking and arc consistency.
