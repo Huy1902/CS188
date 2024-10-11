@@ -25,10 +25,11 @@ def uniform_cost_search(graph : dict, start : int, goal : int) -> list[str]:
                 return path
 
             # Explore the neighbors
-            for neighbor, cost in graph[current_state]:
-                total_cost = current_cost + cost
-                if neighbor not in visited:
-                    heapq.heappush(frontier, (total_cost, path + [neighbor]))
+            if current_state in graph.keys():
+                for neighbor, cost in graph[current_state]:
+                    total_cost = current_cost + cost
+                    if neighbor not in visited:
+                        heapq.heappush(frontier, (total_cost, path + [neighbor]))
 
     # If the goal is not reachable, return []
     return []

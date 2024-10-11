@@ -11,10 +11,11 @@ def bread_first_search(graph: dict, start: int, target:int) -> list[str]:
         vertex = path[-1]
         if vertex == target:
             return path
-        for adj in graph[vertex]:
-            if not adj[0] in visited:
-                visited.add(vertex)
-                queue.put(path + [adj[0]])
+        if vertex in graph.keys():
+            for adj in graph[vertex]:
+                if not adj[0] in visited:
+                    visited.add(vertex)
+                    queue.put(path + [adj[0]])
     return []
 
 demo_graph = {
