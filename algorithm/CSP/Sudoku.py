@@ -1,5 +1,4 @@
-from os import remove
-from queue import Queue
+from algorithm.CSP.CSP import CSP
 
 puzzle = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
           [6, 0, 0, 1, 9, 5, 0, 0, 0],
@@ -26,102 +25,6 @@ def print_sudoku(puzzle):
 
 print_sudoku(puzzle)
 
-
-class CSP:
-
-    def __init__(self, variables, domains, constrains):
-        self.variables = variables
-        self.domains = domains
-        self.constraints = constrains
-        self.count_assignment = 0
-        self.filtering()
-
-    def solve(self):
-        assignments = {}
-        solution = self.backtracking(assignments)
-        return solution
-
-    def backtracking(self, assignments):
-        if len(assignments) == len(self.variables):
-            return assignments
-        variable = self.get_most_constrained_variable(assignments)
-        consistent_value = [value for value in self.domains[variable] if
-                            self.is_consistent(variable, value, assignments)]
-
-        while consistent_value:
-            self.count_assignment += 1
-            assignments[variable] = self.get_least_constraining_value(variable, consistent_value, assignments)
-            next_assignments = self.backtracking(assignments)
-            if next_assignments is not None:
-                return next_assignments
-            del consistent_value[consistent_value.index(assignments[variable])]
-            del assignments[variable]
-
-        # for value in consistent_value:
-        #     self.count_assignment += 1
-        #     assignments[variable] = value
-        #     next_assignments = self.backtracking(assignments)
-        #     if next_assignments is not None:
-        #         return next_assignments
-        #     del assignments[variable]
-        return None
-
-    # Optimization: Filtering: Forward checking & Arc consistency
-    def filtering(self) -> None:
-        queue = Queue()
-        for i in range(9):
-            for j in range(9):
-                for constraint in self.constraints[(i, j)]:
-                    queue.put((constraint, (i, j)))
-        while not queue.empty():
-            constraint = queue.get()
-            head = constraint[0]
-            tail = constraint[1]
-            if self.remove_inconsistent_value(tail, head):
-                for constraint in self.constraints[tail]:
-                    queue.put((tail, constraint))
-
-
-    def remove_inconsistent_value(self, tail, head):
-        removed = False
-        for x in self.domains[tail]:
-            exist_y_satisfy_constraint = False
-            for y in self.domains[head]:
-                if y != x:
-                    exist_y_satisfy_constraint = True
-                    break
-            if not exist_y_satisfy_constraint:
-                self.domains[tail].remove(x)
-                removed = True
-        return removed
-
-
-    # Optimization: Ordering: The Minimum Remaining Values
-    def get_most_constrained_variable(self, assignments):
-        unassigned_var = [var for var in self.variables if var not in assignments.keys()]
-        return min(unassigned_var, key=lambda var: len(self.domains[var]))
-
-
-    def count_constrain_of_value(self, remaining_var, value):
-        count = 0
-        for var in remaining_var:
-            if value in self.domains[var]:
-                count += 1
-        return count
-
-    # Optimization: Ordering: The Least Constraining Value
-    def get_least_constraining_value(self, variable, domain, assignments):
-        remaining_var = [var for var in self.constraints[variable] if var not in assignments.keys()]
-        return min(domain, key=lambda value: self.count_constrain_of_value(remaining_var, value))
-
-
-    def is_consistent(self, variable, value, assignments: dict):
-        for constraint in self.constraints[variable]:
-            if constraint in assignments.keys() and assignments[constraint] == value:
-                return False
-        return True
-
-
 # Add constrain to var, with sudoku constrains consist of:
 # column constraint, row constraint, subgrid constraint
 def add_constrain(var: tuple, constraints: dict):
@@ -143,6 +46,13 @@ def add_constrain(var: tuple, constraints: dict):
                 constraints[var].append((i, j))
     return constraints
 
+## Goal test: a set of constraints
+def goal_test(assignments, var):
+    return True
+
+## Constraint states
+constraint_states = {(i, j) for i in range(1, 10) for j in range(1, 10) if i != j}
+
 
 variables = [(i, j) for i in range(9) for j in range(9)]
 
@@ -154,7 +64,7 @@ for i in range(9):
     for j in range(9):
         constraints = add_constrain((i, j), constraints)
 
-CSP_problem = CSP(variables, domains, constraints)
+CSP_problem = CSP(variables, domains, constraints, goal_test, 9, constraint_states)
 solution = CSP_problem.solve()
 puzzle_solution = [[0 for j in range(9)] for i in range(9)]
 for i in range(9):
