@@ -1,4 +1,4 @@
-from algorithm.CSP.CSP import CSP
+from algorithm.CSP.CSP_backtracking import CSP
 
 
 def generate_board(n):
