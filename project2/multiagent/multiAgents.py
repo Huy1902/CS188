@@ -10,6 +10,7 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
+
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -287,7 +288,55 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        numAgent = 0
+
+        legalMoves = gameState.getLegalActions(0)
+        bestScore = -10000
+        bestMove = None
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(0, numAgent + 1, successorGameState)
+            if score > bestScore:
+                bestScore = score
+                bestMove = legalMove
+        return bestMove
+
+    def value(self, depth, numAgent, gameState: GameState) -> int:
+        if numAgent == gameState.getNumAgents():
+            numAgent = 0
+            depth += 1
+        if depth == self.depth:
+            return self.evaluationFunction(gameState)
+
+        if numAgent == 0:
+            return self.maxValue(depth, numAgent, gameState)
+        return self.expValue(depth, numAgent, gameState)
+
+    def maxValue(self, depth, numAgent, gameState: GameState) -> int:
+        legalMoves = gameState.getLegalActions(numAgent)
+        if not legalMoves:
+            return self.evaluationFunction(gameState)
+        bestScore = -10000
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(depth, numAgent + 1, successorGameState)
+            if score > bestScore:
+                bestScore = score
+        # print(f"bestScore: {bestScore}")
+        return bestScore
+
+    def expValue(self, depth, numAgent, gameState: GameState) -> int:
+        # print(f"numAgent: {numAgent}")
+        legalMoves = gameState.getLegalActions(numAgent)
+        if not legalMoves:
+            return self.evaluationFunction(gameState)
+        expectation = 0
+        pdf = 1 / len(legalMoves)
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            expectation += pdf * self.value(depth, numAgent + 1, successorGameState)
+        # print(f"worstScore: {worstScore}")
+        return expectation
 
 
 def betterEvaluationFunction(currentGameState: GameState):
@@ -297,8 +346,43 @@ def betterEvaluationFunction(currentGameState: GameState):
 
     DESCRIPTION: <write something here so we know what you did>
     """
+    # Useful information you can extract from a GameState (pacman.py)
+
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pacmanPosition = currentGameState.getPacmanPosition()
+    foodList = currentGameState.getFood().asList()
+    ghostPositions = currentGameState.getGhostPositions()
+    ghostStates = currentGameState.getGhostStates()
+    score = currentGameState.getScore()
+
+    # Compute the distance to the closest food item
+    if foodList:
+        distancesToFood = [manhattanDistance(pacmanPosition, food) for food in foodList]
+        minFoodDistance = min(distancesToFood)
+    else:
+        minFoodDistance = 0
+
+    # Compute the distances to the ghosts
+    distancesToGhosts = [manhattanDistance(pacmanPosition, ghost) for ghost in ghostPositions]
+    minGhostDistance = min(distancesToGhosts) if distancesToGhosts else 0
+
+    # Compute the distances to the scared ghosts
+    scaredGhostDistances = [manhattanDistance(pacmanPosition, ghostState.getPosition()) for ghostState in
+                            ghostStates if ghostState.scaredTimer > 0]
+    minScaredGhostDistance = min(scaredGhostDistances) if scaredGhostDistances else None
+
+    if minScaredGhostDistance is not None:
+        score += 200 / minScaredGhostDistance  # Encourage moving towards scared ghosts
+
+    if minGhostDistance > 0:
+        score -= 5 / minGhostDistance  # Discourage moving towards active ghosts
+
+    if minFoodDistance > 0:
+        score += 10 / minFoodDistance  # Encourage moving towards food
+
+    score -= 20 * len(foodList)  # Discourage having too many foods left
+
+    return score
 
 
 # Abbreviation
