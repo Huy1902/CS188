@@ -213,8 +213,66 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        numAgent = 0
+        max_best_option = -10000
+        min_best_option = 10000
+        legalMoves = gameState.getLegalActions(0)
+        bestScore = -10000
+        bestMove = None
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(0, numAgent + 1, successorGameState, max_best_option, min_best_option)
+            max_best_option = max(score, max_best_option)
+            if score > bestScore:
+                bestScore = score
+                bestMove = legalMove
+            if score > min_best_option:
+                return bestMove
+            max_best_option = max(score, max_best_option)
+        return bestMove
 
+    def value(self, depth, numAgent, gameState: GameState, max_best_option, min_best_option) -> int:
+        if numAgent == gameState.getNumAgents():
+            numAgent = 0
+            depth += 1
+        if depth == self.depth:
+            return self.evaluationFunction(gameState)
+        if numAgent == 0:
+            return self.maxValue(depth, numAgent, gameState, max_best_option, min_best_option)
+        return self.minValue(depth, numAgent, gameState, max_best_option, min_best_option)
+
+    def maxValue(self, depth, numAgent, gameState: GameState, max_best_option, min_best_option) -> int:
+        legalMoves = gameState.getLegalActions(numAgent)
+        if not legalMoves:
+            return self.evaluationFunction(gameState)
+        bestScore = -10000
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(depth, numAgent + 1, successorGameState, max_best_option, min_best_option)
+            if score > bestScore:
+                bestScore = score
+            if score > min_best_option:
+                return score
+            max_best_option = max(score, max_best_option)
+        # print(f"bestScore: {bestScore}")
+        return bestScore
+
+    def minValue(self, depth, numAgent, gameState: GameState, max_best_option, min_best_option) -> int:
+        # print(f"numAgent: {numAgent}")
+        legalMoves = gameState.getLegalActions(numAgent)
+        if not legalMoves:
+            return self.evaluationFunction(gameState)
+        worstScore = 10000
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(depth, numAgent + 1, successorGameState, max_best_option, min_best_option)
+            if score < worstScore:
+                worstScore = score
+            if score < max_best_option:
+                return score
+            min_best_option = min(score, min_best_option)
+        # print(f"worstScore: {worstScore}")
+        return worstScore
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
