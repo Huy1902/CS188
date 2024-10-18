@@ -10,14 +10,13 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
-
 from util import manhattanDistance
 from game import Directions
 import random, util
 
 from game import Agent
 from pacman import GameState
+
 
 class ReflexAgent(Agent):
     """
@@ -28,7 +27,6 @@ class ReflexAgent(Agent):
     it in any way you see fit, so long as you don't touch our method
     headers.
     """
-
 
     def getAction(self, gameState: GameState):
         """
@@ -46,10 +44,9 @@ class ReflexAgent(Agent):
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+        chosenIndex = random.choice(bestIndices)  # Pick randomly among the best
 
         "Add more of your code here if you want to"
-
         return legalMoves[chosenIndex]
 
     def evaluationFunction(self, currentGameState: GameState, action):
@@ -70,12 +67,28 @@ class ReflexAgent(Agent):
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
-        newFood = successorGameState.getFood()
+        newFood = successorGameState.getFood().asList()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        newScore = successorGameState.getScore()
+
+        # print(f"----------\nnewPos: {newPos}")
+        # print(f"newFood: {newFood}")
+        # print(f"newGhostPos: {newGhostPos}")
+        # print(f"newScaredTimes: {newScaredTimes}")
+        if not newFood:
+            return 10000
+        distanceFood = [manhattanDistance(newPos, x) for x in newFood]
+
+        minDistanceFood = min(distanceFood)
+
+        # print(f"minDistanceFood: {minDistanceFood}")
+        # print(f"newScore: {newScore}")
+        # print(f"minDistanceGhost: {minDistanceGhost}\n---------------")
+        return newScore * 10 - minDistanceFood
+
 
 def scoreEvaluationFunction(currentGameState: GameState):
     """
@@ -86,6 +99,7 @@ def scoreEvaluationFunction(currentGameState: GameState):
     (not reflex agents).
     """
     return currentGameState.getScore()
+
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -102,10 +116,11 @@ class MultiAgentSearchAgent(Agent):
     is another abstract class.
     """
 
-    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
-        self.index = 0 # Pacman is always agent index 0
+    def __init__(self, evalFn='scoreEvaluationFunction', depth='2'):
+        self.index = 0  # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
+
 
 class MinimaxAgent(MultiAgentSearchAgent):
     """
@@ -136,7 +151,57 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        numAgent = 0
+
+        legalMoves = gameState.getLegalActions(0)
+        bestScore = -10000
+        bestMove = None
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(0, numAgent + 1, successorGameState)
+            if score > bestScore:
+                bestScore = score
+                bestMove = legalMove
+        return bestMove
+
+    def value(self, depth, numAgent, gameState: GameState) -> int:
+        if numAgent == gameState.getNumAgents():
+            numAgent = 0
+            depth += 1
+        if depth == self.depth:
+            return self.evaluationFunction(gameState)
+
+        if numAgent == 0:
+            return self.maxValue(depth, numAgent, gameState)
+        return self.minValue(depth, numAgent, gameState)
+
+    def maxValue(self, depth, numAgent, gameState: GameState) -> int:
+        legalMoves = gameState.getLegalActions(numAgent)
+        if not legalMoves:
+            return self.evaluationFunction(gameState)
+        bestScore = -10000
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(depth, numAgent + 1, successorGameState)
+            if score > bestScore:
+                bestScore = score
+        # print(f"bestScore: {bestScore}")
+        return bestScore
+
+    def minValue(self, depth, numAgent, gameState: GameState) -> int:
+        # print(f"numAgent: {numAgent}")
+        legalMoves = gameState.getLegalActions(numAgent)
+        if not legalMoves:
+            return self.evaluationFunction(gameState)
+        worstScore = 10000
+        for legalMove in legalMoves:
+            successorGameState = gameState.generateSuccessor(numAgent, legalMove)
+            score = self.value(depth, numAgent + 1, successorGameState)
+            if score < worstScore:
+                worstScore = score
+        # print(f"worstScore: {worstScore}")
+        return worstScore
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -149,6 +214,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -165,6 +231,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
+
 def betterEvaluationFunction(currentGameState: GameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -174,6 +241,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
 
 # Abbreviation
 better = betterEvaluationFunction
