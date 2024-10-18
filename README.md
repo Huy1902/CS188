@@ -11,6 +11,9 @@ These projects are in the course CS188. Here is where I upload my work on that.
   - [2. Minimax](#2-minimax)
   - [3. Alpha-Beta Pruning](#3-alpha-beta-pruning)
   - [4. Evaluation Function](#4-evaluation-function)
+  - [5. Expectimax](#5-expectimax)
+  - [6. Other game types](#6-other-game-types)
+  - [7. Utilities](#7-utilities)
 
 # CSPs Overview
 
@@ -32,7 +35,7 @@ A goal test is a set of constraints.
 - Simulated annealing search
 - Genetic algorithms
 
-# Game
+# Game tree
 
 ## 1. Definition
 - Adversarial search problems, known as games
@@ -55,3 +58,18 @@ A goal test is a set of constraints.
 - Estimating the true minimax value of a state
 - Depth-limited minimax
 - Feature and weight
+
+## 5. Expectimax:
+- Use when facing suboptimal opponent(s), using a probability distribution
+over the moves.
+- Chance nodes which consider average case instead of minimizer node.
+
+## 6. Other game types:
+- Mixed layer types
+- Multi-agent utilities
+
+## 7. Utilities:
+- Average utilities
+- Describe an agent's preference
+- Rational preferences
+- Human utilities
