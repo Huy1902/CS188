@@ -36,7 +36,7 @@ def getSuccessors(state: int) -> list:
 
 
 def probability(state: int) -> int:
-    return probability_rate[state]
+    return probability_rate[state   ]
 
 game_tree = [INFINITE_NEGATIVE] * 9
 game_tree += [3, 12, 9, 2, 4, 6, 15, 6, 0]
