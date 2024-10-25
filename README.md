@@ -14,6 +14,23 @@ These projects are in the course CS188. Here is where I upload my work on that.
   - [5. Expectimax](#5-expectimax)
   - [6. Other game types](#6-other-game-types)
   - [7. Utilities](#7-utilities)
+- [CSPs Overview](#csps-overview)
+  - [1. Terminology](#1-terminology)
+  - [2. Improve the performance](#2-improve-the-performance)
+  - [3. Local search](#3-local-search)
+- [Game](#game)
+  - [1. Definition](#1-definition)
+  - [2. Minimax](#2-minimax)
+  - [3. Alpha-Beta Pruning](#3-alpha-beta-pruning)
+  - [4. Evaluation Function](#4-evaluation-function)
+  - [5. Expectimax](#5-expectimax)
+  - [6. Other game types](#6-other-game-types)
+  - [7. Utilities](#7-utilities)
+  - [8. Monte Carlo Tree Search](#8-monte-carlo-tree-search)
+- [Logic: Proposition](#logic-proposition)
+  - [1. Knowledge](#1-knowledge)
+  - [2. Logic](#2-logic)
+  - [3. Inference](#3-inference)
 
 # CSPs Overview
 
@@ -73,3 +90,26 @@ over the moves.
 - Describe an agent's preference
 - Rational preferences
 - Human utilities
+
+## 8. Monte Carlo Tree Search
+- Idea: Evaluation by rollout + selective search.
+- Allocate rollout
+
+# Logic: Proposition
+
+## 1. Knowledge:
+- Knowledge base: domain-specific facts
+- Inference engine: generic code
+- Knowledge based agent: knowledge + inference
+- Can be encoded by logic
+## 2. Logic:
+- Syntax
+- Semantics: set of possible worlds, sentences (truth condition).
+
+## 3. Inference:
+- Entailment
+- Proof: demonstration of entailment
+  - Algorithm
+  - Method: model-checking, theorem-proving
+  - Modus Ponens
+
