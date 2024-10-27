@@ -18,6 +18,7 @@ Pacman agents (in logicAgents.py).
 """
 
 from typing import Dict, List, Tuple, Callable, Generator, Any
+
 import util
 import sys
 import logic
@@ -175,7 +176,7 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     True
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return disjoin(literals)
     "*** END YOUR CODE HERE ***"
 
 
@@ -187,7 +188,10 @@ def atMostOne(literals: List[Expr]) -> Expr:
     itertools.combinations may be useful here.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    statements = [~expr for expr in literals]
+    statements = itertools.combinations(statements, 2)
+    clauses = [disjoin(statement[0], statement[1]) for statement in statements]
+    return logic.conjoin(clauses)
     "*** END YOUR CODE HERE ***"
 
 
@@ -198,7 +202,12 @@ def exactlyOne(literals: List[Expr]) -> Expr:
     the expressions in the list is true.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # statements = [~expr for expr in literals]
+    # statements = list(itertools.combinations(statements, 2))
+    # clauses = [disjoin(list(statement)) for statement in statements]
+    # clauses += [disjoin(literals)]
+
+    return conjoin(atLeastOne(literals), atMostOne(literals))
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
@@ -231,7 +240,10 @@ def pacmanSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[
         return None
     
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    moved_cause = conjoin( ~PropSymbolExpr(pacman_str, x, y, time=last),
+                           ~PropSymbolExpr(wall_str, x, y),
+                           disjoin(possible_causes))
+    return moved_cause
     "*** END YOUR CODE HERE ***"
 
 
@@ -258,7 +270,10 @@ def SLAMSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[bo
     if not moved_causes:
         return None
 
-    moved_causes_sent: Expr = conjoin([~PropSymbolExpr(pacman_str, x, y, time=last) , ~PropSymbolExpr(wall_str, x, y), disjoin(moved_causes)])
+    # last pacman is not same position as now and it moved successfully
+    moved_causes_sent: Expr = conjoin([~PropSymbolExpr(pacman_str, x, y, time=last),
+                                       ~PropSymbolExpr(wall_str, x, y),
+                                       disjoin(moved_causes)])
 
     failed_move_causes: List[Expr] = [] # using merged variables, improves speed significantly
     auxilary_expression_definitions: List[Expr] = []
@@ -267,16 +282,24 @@ def SLAMSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[bo
         wall_dir_clause = PropSymbolExpr(wall_str, x + dx, y + dy) & PropSymbolExpr(direction, time=last)
         wall_dir_combined_literal = PropSymbolExpr(wall_str + direction, x + dx, y + dy, time=last)
         failed_move_causes.append(wall_dir_combined_literal)
+
+        # wall_dir_combined_literal is WALL_NORTH[x + dx, y + dy], WALL_SOUTH etc that so wall is at that direction
+        # This statement => wall_dir_clause
+        # wall_dir_clause is Wall[x + dx, y + dy] & NORTH_last
         auxilary_expression_definitions.append(wall_dir_combined_literal % wall_dir_clause)
 
+    # last pacman is same position as now and it moved failed
     failed_move_causes_sent: Expr = conjoin([
         PropSymbolExpr(pacman_str, x, y, time=last),
         disjoin(failed_move_causes)])
 
-    return conjoin([PropSymbolExpr(pacman_str, x, y, time=now) % disjoin([moved_causes_sent, failed_move_causes_sent])] + auxilary_expression_definitions)
+    return conjoin([PropSymbolExpr(pacman_str, x, y, time=now)
+                    % disjoin([moved_causes_sent, failed_move_causes_sent])]
+                   + auxilary_expression_definitions)
 
 
-def pacphysicsAxioms(t: int, all_coords: List[Tuple], non_outer_wall_coords: List[Tuple], walls_grid: List[List] = None, sensorModel: Callable = None, successorAxioms: Callable = None) -> Expr:
+def pacphysicsAxioms(t: int, all_coords: List[Tuple], non_outer_wall_coords: List[Tuple], walls_grid: List[List] = None,
+                     sensorModel: Callable = None, successorAxioms: Callable = None) -> Expr:
     """
     Given:
         t: timestep
