@@ -304,7 +304,6 @@ def SLAMSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[bo
                    + auxilary_expression_definitions)
 
 
-
 def pacphysicsAxioms(t: int, all_coords: List[Tuple], non_outer_wall_coords: List[Tuple], walls_grid: List[List] = None,
                      sensorModel: Callable = None, successorAxioms: Callable = None) -> Expr:
     """
@@ -419,14 +418,13 @@ def positionLogicPlan(problem) -> List:
     for t in range(50):
         print(f"time step: {t}")
         KB.append(exactlyOne([PropSymbolExpr(pacman_str, x, y, time=t) for x, y in non_wall_coords]))
-        goalModel =  findModel(conjoin(KB) & PropSymbolExpr(pacman_str, xg, yg, time=t))
+        goalModel = findModel(conjoin(KB) & PropSymbolExpr(pacman_str, xg, yg, time=t))
         if goalModel:
             print(extractActionSequence(goalModel, actions))
             return extractActionSequence(goalModel, actions)
         KB.append(exactlyOne([PropSymbolExpr(action, time=t) for action in actions]))
 
         KB += [pacmanSuccessorAxiomSingle(x, y, t + 1, walls_grid) for x, y in non_wall_coords]
-        # //print(KB)
     "*** END YOUR CODE HERE ***"
     return None
 
@@ -457,8 +455,26 @@ def foodLogicPlan(problem) -> List:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
+    KB += [PropSymbolExpr(food_str, x, y, time=0) for x, y in food]
+    for t in range(50):
+        print(f"time step: {t}")
+        KB.append(exactlyOne([PropSymbolExpr(pacman_str, x, y, time=t) for x, y in non_wall_coords]))
+        goalAssertion = conjoin([~PropSymbolExpr(food_str, x, y, time=t) for x, y in food])
+        # print(f"goalAssertion: {goalAssertion}")
+        goalModel = findModel(conjoin(KB) & goalAssertion)
+        if goalModel:
+            # print(extractActionSequence(goalModel, actions))
+            return extractActionSequence(goalModel, actions)
+        KB.append(exactlyOne([PropSymbolExpr(action, time=t) for action in actions]))
+        foodSuccessorAxioms: list[Expr] = [(PropSymbolExpr(food_str, x, y, time=t)
+                                            & ~PropSymbolExpr(pacman_str, x, y, time=t))
+                                           >> PropSymbolExpr(food_str, x, y, time=t + 1) for x, y in food]
+        KB += foodSuccessorAxioms
+        KB += [pacmanSuccessorAxiomSingle(x, y, t + 1, walls) for x, y in non_wall_coords]
+        # print(KB)
     "*** END YOUR CODE HERE ***"
+    return None
 
 
 # ______________________________________________________________________________
