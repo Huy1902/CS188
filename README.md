@@ -113,3 +113,61 @@ over the moves.
   - Method: model-checking, theorem-proving
   - Modus Ponens
 
+# Inference in Propositional Logic
+# 1. Model checking: DPLL algorithm:
+- Early Termination
+- Pure Symbol Heuristic
+- Unit Clause Heuristic
+- SAT Solver based on DPLL algorithm
+# 2. Theorem-proving: Forward chaining
+- Apply Modus Ponens to generate new facts
+- Iterating the premise
+- Adding the conclusion
+- Another algorithm: resolution: sound and complete but expensive cost
+# 3. Logical agent: 
+Using one generic inference algorithm on one knowledge base:
+- Localization
+- Mapping
+- SLAM
+- Planning
+
+# First-Order logic
+
+# 1. Representation:
+- Object: constant symbol
+- Relationship: predicate symbol
+- Function: function symbol: another way to name object
+- Term: logical expressions that refer an object (simplest form is constant symbol)
+
+# 2. Syntax and semantic:
+- Atomic sentences
+- Complex sentences: use quantifiers:
+  - Universal quantifiers
+  - Existential quantifiers
+
+# 3. Inference in FOL
+- Entailment
+- Substitution (binding)
+- Propositionalization
+- Lifted inference
+
+# Probability
+# 1. Uncertainly
+- Ignorance
+- Laziness
+# 2. Probability rundown:
+- Random variable
+- Probability distribution
+- Joint distribution
+- Chain rule
+- Marginal distribution
+- Normalize
+- Conditional probabilities
+- Bayes rule
+- Mutually independent and conditional independent
+# 3. Probabilistic Inference:
+- Compute a desired probability from a probability model
+# 4. Inference by enumeration:
+- Query variable
+- Evidence variable
+- Hidden variable
