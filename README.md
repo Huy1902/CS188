@@ -31,6 +31,19 @@ These projects are in the course CS188. Here is where I upload my work on that.
   - [1. Knowledge](#1-knowledge)
   - [2. Logic](#2-logic)
   - [3. Inference](#3-inference)
+- [Inference in Propositional Logic](#inference-in-propositional-logic)
+  - [1. Model checking](#1-model-checking)
+  - [2. Theorem-proving](#2-theorem-proving)
+  - [3. Logical agent](#3-logical-agent)
+- [First-Order logic](#first-order-logic)
+  - [1. Representation](#1-representation)
+  - [2. Syntax and semantic](#2-syntax-and-semantic)
+  - [3. Inference in FOL](#3-inference-in-fol)
+- [Probability](#probability)
+  - [1. Uncertainly](#1-uncertainly)
+  - [2. Probability rundown](#2-probability-rundown)
+  - [3. Probabilistic Inference](#3-probabilistic-inference)
+  - [4. Inference by enumeration](#4-inference-by-enumeration)
 
 # CSPs Overview
 
