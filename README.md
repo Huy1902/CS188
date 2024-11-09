@@ -44,6 +44,20 @@ These projects are in the course CS188. Here is where I upload my work on that.
   - [2. Probability rundown](#2-probability-rundown)
   - [3. Probabilistic Inference](#3-probabilistic-inference)
   - [4. Inference by enumeration](#4-inference-by-enumeration)
+- [Bayes Net](#bayes-net)
+- [1. Bayesian Network Representation](#1-bayesian-network-representation)
+- [2. Structure of Bayes Net](#2-structure-of-bayes-net)
+- [3. Trade-off Accuracy and Performance](#3-trade-off-accuracy-and-performance)
+- [Bayes Net: Inference](#bayes-net-inference)
+  - [1. Inference by Enumeration](#1-inference-by-enumeration)
+  - [2. Variable Elimination](#2-variable-elimination)
+  - [3. Compare](#3-compare)
+- [Bayes Net: Sampling and Approximate Inference](#bayes-net-sampling-and-approximate-inference)
+  - [1. Prior sampling](#1-prior-sampling)
+  - [2. Rejection Sampling](#2-rejection-sampling)
+  - [3. Likelihood Weighting](#3-likelihood-weighting)
+  - [4. Gibbs Sampling](#4-gibbs-sampling)
+
 
 # CSPs Overview
 
