@@ -184,3 +184,56 @@ Using one generic inference algorithm on one knowledge base:
 - Query variable
 - Evidence variable
 - Hidden variable
+
+# Bayes Net
+- Describe complex joint distribution (models) using simple, conditional distributions
+# 1. Bayesian Network Representation:
+- A bayes net consist of:
+  - A directed acyclic graph of nodes, one per variable X
+  - Conditional probability table (CPT)
+- Encode conditional independence relations between different nodes.
+- Implicitly encode joint distribution
+- The edge do not mean a casual relationship. It just means some relations between nodes.
+
+# 2. Structure of bayes net:
+- Each node is conditionally independent of all its ancestor nodes (not-descendants) in the graph,
+given all of its parents.
+- Each node is conditionally independent of all other variables given its Markov blanket.
+
+# 3. Trade-off accuracy and performance:
+- Strict independent
+- Naive Bayes
+- Sparse Bayes Net
+- Joint distribution
+
+# Bayes Net: Inference
+# 1. Inference by enumeration:
+- Select the entries consistent with the evidence
+- Sum out hidden variables to get joint of query and evidence
+- Normalize
+# 2. Variable elimination:
+Eliminate hidden variable one by one
+- Join all factors involving X
+- Sum out X
+- A factor is defined as unnormalized probability (not necessarily sum up to 1)
+- Linear time for poly tree
+# 3. Compare:
+- Operation 1: join factors
+- Operation 2: eliminate (marginalization)
+- Inference by enumeration = multiple join, multiple eliminate
+- Variable elimination = Marginalizing Early
+# Bayes net: Sampling: Approximate Inference
+# 1. Prior sampling:
+- A stimulator to generate particle (sample)
+
+# 2. Rejection sampling:
+- Modify our procedure to early reject any sample inconsistent with our evidence
+
+# 3. Likelihood weighting:
+- Fix evidence variables, sample the rest
+- Weight each sample by probability of evidence variables given parents
+
+# 4. Gibbs sampling:
+- Set all variables to some totally random value
+- Repeatedly pick one variable at a time, clear its value, and resample it given the values currently assigned 
+to all other variables.
