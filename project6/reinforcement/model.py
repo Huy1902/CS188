@@ -1,6 +1,8 @@
+
+
 import nn
 
-class DeepQNetwork():
+class DeepQNetwork:
     """
     A model that uses a Deep Q-value Network (DQN) to approximate Q(s,a) as part
     of reinforcement learning.
@@ -11,11 +13,11 @@ class DeepQNetwork():
         self.state_size = state_dim
 
         self.learning_rate = 0.5
-        self.numTrainingGames = 1000
-        self.batch_size = 1000
+        self.numTrainingGames = 2200
+        self.batch_size = 80
 
-        self.num_hidden_node = 2**14
-        self.num_hidden_node2 = 2**12
+        self.num_hidden_node = 2**8
+        self.num_hidden_node2 = 2**6
 
         # Define the neural network layers
         self.w1 = nn.Parameter(state_dim, self.num_hidden_node)
@@ -26,7 +28,9 @@ class DeepQNetwork():
         self.parameters = [self.w1, self.w2, self.w5]
 
     def set_weights(self, layers):
-        self.parameters = layers
+        self.parameters = []
+        for i in range(len(layers)):
+            self.parameters.append(layers[i])
 
     def get_loss(self, states, Q_target):
         """

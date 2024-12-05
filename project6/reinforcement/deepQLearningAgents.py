@@ -21,7 +21,7 @@ class PacmanDeepQAgent(PacmanQAgent):
         self.update_frequency = 3
         self.counts = None
         self.replay_memory = ReplayMemory(50000)
-        self.min_transitions_before_training = 10000
+        self.min_transitions_before_training = 100
         self.td_error_clipping = 1
 
         # Initialize Q networks:
@@ -106,13 +106,14 @@ class PacmanDeepQAgent(PacmanQAgent):
 
         replace_indices = np.arange(actions.shape[0])
         action_indices = np.argmax(network.run(next_states).data, axis=1)
-        target = rewards + exploration_bonus + (1 - done) * self.discount * target_network.run(next_states).data[replace_indices, action_indices]
+        target = rewards + exploration_bonus + (1 - done) * self.discount * target_network.run(next_states).data[
+            replace_indices, action_indices]
 
         Q_target[replace_indices, actions] = target
 
         if self.td_error_clipping is not None:
             Q_target = Q_predict + np.clip(
-                     Q_target - Q_predict, -self.td_error_clipping, self.td_error_clipping)
+                Q_target - Q_predict, -self.td_error_clipping, self.td_error_clipping)
 
         return Q_target
 
@@ -148,7 +149,7 @@ class PacmanDeepQAgent(PacmanQAgent):
             if self.doubleQ:
                 Q_target2 = self.compute_q_targets(minibatch, self.target_model, self.model, doubleQ=self.doubleQ)
                 Q_target2 = nn.Constant(Q_target2.astype("float64"))
-            
+
             self.model.gradient_update(states, Q_target1)
             if self.doubleQ:
                 self.target_model.gradient_update(states, Q_target2)
